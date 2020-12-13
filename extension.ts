@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
             lastTime = recentRuns[recentRuns.length - 1].end - recentRuns[recentRuns.length - 1].start;
         }
 
-        status.text = `Extension ${sum}ms/${recentRunLength}ms, ${recentRuns.length}, Last ${lastTime}ms`;
+        status.text = `Closer ${sum}ms/${recentRunLength}ms, ${recentRuns.length}, Last ${lastTime}ms`;
         status.show();
     }
 
@@ -171,14 +171,7 @@ export async function updateDecorations(
             decorations.push(decoration);
         }
         function traverse(
-            config: {
-                // "stop" stops the traverse, calling exit on the remaining entered nodes, but not calling enter on any more nodes
-                // "skipSiblings" prevents any more nodes with the same parent (siblings) from being traversed, calling exit on this node,
-                //  and then exit on our parent, then continuing traversal.
-                // "ignore" ignores the node, still calling exit on it, but not traversing down on it. Siblings, etc are still traversed
-                enter: (statement: Node, parent?: Node, property?: string) => "stop" | "skipSiblings" | "ignore" | void,
-                exit?: (statement: Node, parent?: Node, property?: string) => void,
-            }
+            config: Parameters<Parameters<UpdatedAST>[0]["traverse"]>[0]
         ): void {
             if (callbacksExpired) throw new Error(`Cannot call callback after update callback finishes.`);
 
@@ -250,7 +243,8 @@ export type UpdatedAST = {
                     // "stop" stops the traverse, calling exit on the remaining entered nodes, but not calling enter on any more nodes
                     // "skipSiblings" prevents any more nodes with the same parent (siblings) from being traversed, calling exit on this node,
                     //  and then exit on our parent, then continuing traversal.
-                    enter: (statement: Node, parent?: Node, property?: string) => "stop" | "skipSiblings" | void,
+                    // "ignore" ignores the node, still calling exit on it, but not traversing down on it. Siblings, etc are still traversed
+                    enter: (statement: Node, parent?: Node, property?: string) => "stop" | "skipSiblings" | "ignore" | void,
                     exit?: (statement: Node, parent?: Node, property?: string) => void,
                 }
             ) => void
