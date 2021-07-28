@@ -278,13 +278,4 @@ onUpdatedAST(({ setDecoration, traverse, doc, ast }) => {
             });
         }
     }
-
-
-    traverse({
-        enter: node => {
-            if (node.type === AST_NODE_TYPES.AwaitExpression) {
-                setDecoration({ node, backgroundColor: "blue" });
-            }
-        }
-    });
 });
