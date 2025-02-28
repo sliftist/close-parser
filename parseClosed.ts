@@ -1,3 +1,37 @@
+/*
+    BUG: try/catches think the catch variable is global
+    BUG: setValues is closed upon from the wrong scope
+        {
+            let setValues = getSetValues();
+            for (let [param, value] of setValues) {
+                let urlKey = param.config.urlKey;
+                if (urlKey) {
+                    setValuesObject[urlKey] = value;
+                }
+            }
+        }
+
+        let attributes = {
+            ...remaining,
+            href: (baseUrl || "") + createSetProgramArgumentsUrl(setValuesObject),
+            onClick: (e: preact.JSX.TargetedMouseEvent<EventTarget>) => {
+                let setValues = getSetValues();
+
+                // If they want to open in a new tab, then let them.
+                if (remaining.target === "_blank" || plainOldLink) return;
+                e.preventDefault();
+
+                batchPersistedSets(() => {
+                    for (let [param, value] of setValues) {
+                        param.value = value;
+                    }
+                });
+
+                this.props.onChange?.();
+            }
+        };
+*/
+
 import { Node, Identifier, LineAndColumnData, SourceLocation, Program, Parameter } from "@typescript-eslint/typescript-estree/dist/ts-estree/ts-estree";
 import { parse, AST_NODE_TYPES } from "@typescript-eslint/typescript-estree";
 import { EnterExitTraverser } from "./enterExitTraverser";
